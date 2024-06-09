@@ -25,7 +25,7 @@ COPY deploymentApp/src ./src
 RUN mvn -B clean package -DskipTests
 
 # Use OpenJDK to run the application
-FROM openjdk:21
+FROM openjdk:17-alpine
 
 # Copy the built jar file from the Maven build stage
 COPY --from=build /app/target/*.jar deploymentApp.jar
