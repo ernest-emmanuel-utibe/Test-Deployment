@@ -26,7 +26,7 @@ jobs:
 
     - name: Merge systest into uat
       run: |
-        git merge --no-ff systest
+        git merge --no-ff systest --allow-unrelated-histories
         if [ $? -ne 0 ]; then
           git merge --abort
           exit 1
