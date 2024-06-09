@@ -1,4 +1,4 @@
-name: Merge Systest to uat
+name: Merge systest to uat
 
 on:
   push:
@@ -10,29 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up Git
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+    - name: Set up Git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Fetch all branches
-        run: git fetch --all
+    - name: Fetch all branches
+      run: git fetch --all
 
-      - name: Checkout uat branch
-        run: git checkout uat
+    - name: Checkout uat branch
+      run: git checkout uat
 
-      - name: Merge systest into uat
-        run: |
-          git merge --no-ff systest
-          if [ $? -ne 0 ]; then
-            git merge --abort
-            exit 1
-          fi
+    - name: Merge systest into uat
+      run: |
+        git merge --no-ff systest
+        if [ $? -ne 0 ]; then
+          git merge --abort
+          exit 1
+        fi
 
-      - name: Push changes to uat
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        run: git push origin uat
+    - name: Push changes to uat
+      env:
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }}
+        git push origin uat
