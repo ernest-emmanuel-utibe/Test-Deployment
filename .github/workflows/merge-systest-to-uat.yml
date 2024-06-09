@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - systest
-
+      
 jobs:
   merge:
     runs-on: ubuntu-latest
