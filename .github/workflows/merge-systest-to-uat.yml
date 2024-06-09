@@ -1,40 +1,65 @@
-name: Merge systest to uat
+# name: Merge systest to uat
+
+# on:
+#   push:
+#     branches:
+#       - systest
+
+# jobs:
+#   merge:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v3
+
+#     - name: Set up Git
+#       run: |
+#         git config --global user.name 'github-actions[bot]'
+#         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+#     - name: Fetch all branches
+#       run: git fetch --all
+
+#     - name: Checkout uat branch
+#       run: git checkout uat
+
+#     - name: Merge systest into uat
+#       run: |
+#         git merge --no-ff systest --allow-unrelated-histories
+#         if [ $? -ne 0 ]; then
+#           git merge --abort
+#           exit 1
+#         fi
+
+#     - name: Push changes to uat
+#       env:
+#         PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+#       run: |
+#         git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }}
+#         git push https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }} uat
+
+
+
+name: Merge to Uat
 
 on:
   push:
     branches:
-      - systest
-
+      - "systest"
+      
 jobs:
-  merge:
+  merge_to_development:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: Set up Git
-      run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-    - name: Fetch all branches
-      run: git fetch --all
-
-    - name: Checkout uat branch
-      run: git checkout uat
-
-    - name: Merge systest into uat
-      run: |
-        git merge --no-ff systest --allow-unrelated-histories
-        if [ $? -ne 0 ]; then
-          git merge --abort
-          exit 1
-        fi
-
-    - name: Push changes to uat
-      env:
-        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-      run: |
-        git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }}
-        git push https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }} uat
+    - name: Merge systest -> uat
+      uses: devmasx/merge-branch@master
+      with:
+        type: now
+        from_branch: "systest"
+        target_branch: uat
+        github_token: ${{ secrets.PAT_TOKEN }}
