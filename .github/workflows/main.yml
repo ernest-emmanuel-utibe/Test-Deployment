@@ -1,0 +1,50 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: myuser
+          POSTGRES_PASSWORD: mypassword
+          POSTGRES_DB: mydb
+          POSTGRES_DB_URL: jdbc:postgresql://localhost:5432
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5  
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up environment
+        run: docker-compose -f docker-compose.yml up -d --build
+
+      - name: Run Unit Tests
+        run: docker exec -it my_container_name yarn test
+
+      - name: Build Docker Images
+        run: docker build -t my_image_name .
+
+      - name: Push Images to Docker Hub
+        run: docker push my_image_name
+
+      - name: Deploy to Dev Environment
+        run: ./deploy-dev.sh
+
+      - name: Connect to QA Repository
+        run: ./connect-to-qa.sh
+
+      - name: Run Automation Tests
+        run: ./run-automation-tests.sh
+
+      - name: Deploy to Systest Environment
+        run: ./deploy-systest.sh
