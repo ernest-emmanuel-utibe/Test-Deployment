@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   app:
-    build: ..
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:
@@ -27,7 +29,7 @@ services:
       - mongo-data:/data/db
 
   keycloak:
-    image: keycloak/keycloak:nightly
+    image: quay.io/keycloak/keycloak:latest
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
