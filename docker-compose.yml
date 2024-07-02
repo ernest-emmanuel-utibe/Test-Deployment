@@ -27,7 +27,7 @@ services:
       - mongo-data:/data/db
 
   keycloak:
-    image: jboss/keycloak:latest
+    image: keycloak/keycloak:nightly
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
